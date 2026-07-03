@@ -1,0 +1,128 @@
+{
+	"pools": [
+		{
+			"bonus_rolls": 4,
+			"entries": [
+				{
+					"functions": [
+						{
+							"count": {
+								"max": 1,
+								"min": 2,
+								"type": "minecraft:uniform"
+							},
+							"function": "minecraft:set_count"
+						}
+					],
+					"name": "minecraft:magma_cream",
+					"type": "minecraft:item",
+					"weight": 2
+				},
+				{
+					"functions": [
+						{
+							"count": {
+								"max": 1,
+								"min": 2,
+								"type": "minecraft:uniform"
+							},
+							"function": "minecraft:set_count"
+						}
+					],
+					"name": "minecraft:ghast_tear",
+					"type": "minecraft:item",
+					"weight": 2
+				},
+				{
+					"functions": [
+						{
+							"count": {
+								"max": 1,
+								"min": 2,
+								"type": "minecraft:uniform"
+							},
+							"function": "minecraft:set_count"
+						}
+					],
+					"name": "minecraft:blaze_powder",
+					"type": "minecraft:item",
+					"weight": 2
+				},
+				{
+					"functions": [
+						{
+							"count": {
+								"max": 1,
+								"min": 2,
+								"type": "minecraft:uniform"
+							},
+							"function": "minecraft:set_count"
+						}
+					],
+					"name": "minecraft:fermented_spider_eye",
+					"type": "minecraft:item",
+					"weight": 2
+				},
+				{
+					"functions": [
+						{
+							"count": {
+								"max": 1,
+								"min": 2,
+								"type": "minecraft:uniform"
+							},
+							"function": "minecraft:set_count"
+						}
+					],
+					"name": "minecraft:nether_wart",
+					"type": "minecraft:item",
+					"weight": 2
+				},
+				{
+					"functions": [
+						{
+							"function": "minecraft:set_potion",
+							"id": "minecraft:strength"
+						}
+					],
+					"name": "minecraft:potion",
+					"type": "minecraft:item"
+				},
+				{
+					"functions": [
+						{
+							"function": "minecraft:set_potion",
+							"id": "minecraft:swiftness"
+						}
+					],
+					"name": "minecraft:potion",
+					"type": "minecraft:item"
+				},
+				{
+					"functions": [
+						{
+							"function": "minecraft:set_potion",
+							"id": "minecraft:regeneration"
+						}
+					],
+					"name": "minecraft:potion",
+					"type": "minecraft:item"
+				},
+				{
+					"functions": [
+						{
+							"function": "minecraft:set_potion",
+							"id": "minecraft:healing"
+						}
+					],
+					"name": "minecraft:potion",
+					"type": "minecraft:item"
+				}
+			],
+			"rolls": {
+				"max": 8,
+				"min": 4
+			}
+		}
+	]
+}

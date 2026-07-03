@@ -1,0 +1,6 @@
+name: CastleDungeons
+version: 1.0.0
+main: net.puffish.castledungeons.CastleDungeonsPlugin
+api-version: 1.19
+description: Generates procedural illager castle dungeons in the world
+authors: [ puffish ]

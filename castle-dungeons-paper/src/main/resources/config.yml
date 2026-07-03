@@ -1,0 +1,155 @@
+# Castle Dungeons Paper — World generation configuration
+# Mirrors the original Forge mod's castle_illager.json / castle_illager_plains.json / castle_illager_desert.json
+
+# How many chunks apart castles are placed (same region grid as vanilla structures)
+spacing: 64
+# Minimum chunk distance from region edge to castle
+separation: 8
+# Random seed salt (keeps castle positions stable across server restarts)
+salt: 30042004
+
+variants:
+  plains:
+    enabled: true
+    min-size: 4   # minimum grid cells per side (inclusive)
+    max-size: 8   # maximum grid cells per side (inclusive)
+    mossiness: 0.2    # probability a stone-brick block becomes mossy
+    crackiness: 0.3   # probability a stone-brick block becomes cracked
+    biomes:
+      - "minecraft:plains"
+      - "minecraft:sunflower_plains"
+      - "minecraft:snowy_plains"
+      - "minecraft:swamp"
+      - "minecraft:mangrove_swamp"
+      - "minecraft:forest"
+      - "minecraft:flower_forest"
+      - "minecraft:birch_forest"
+      - "minecraft:old_growth_birch_forest"
+      - "minecraft:dark_forest"
+      - "minecraft:taiga"
+      - "minecraft:snowy_taiga"
+      - "minecraft:old_growth_pine_taiga"
+      - "minecraft:old_growth_spruce_taiga"
+    rooms:
+      - structure: alchemy
+        weight: 2
+        min-count: 0
+        max-count: 2
+      - structure: bed
+        weight: 1
+        min-count: 0
+        max-count: 5
+      - structure: blacksmith
+        weight: 2
+        min-count: 0
+        max-count: 3
+      - structure: cake
+        weight: 1
+        min-count: 0
+        max-count: 5
+      - structure: coal_storage
+        weight: 1
+        min-count: 0
+        max-count: 3
+      - structure: dinning
+        weight: 5
+        min-count: 0
+        max-count: 3
+      - structure: enchanting
+        weight: 3
+        min-count: 0
+        max-count: 2
+      - structure: food_storage
+        weight: 1
+        min-count: 0
+        max-count: 3
+      - structure: hay_storage
+        weight: 1
+        min-count: 0
+        max-count: 3
+      - structure: jukebox
+        weight: 2
+        min-count: 0
+        max-count: 3
+      - structure: kitchen
+        weight: 2
+        min-count: 0
+        max-count: 3
+      - structure: library
+        weight: 1
+        min-count: 1
+        max-count: 2
+      - structure: storage
+        weight: 2
+        min-count: 0
+        max-count: 3
+      - structure: throne
+        weight: 10
+        min-count: 1
+        max-count: 1
+
+  desert:
+    enabled: true
+    min-size: 4
+    max-size: 8
+    mossiness: 0.0
+    crackiness: 0.0
+    biomes:
+      - "minecraft:desert"
+    rooms:
+      - structure: alchemy
+        weight: 2
+        min-count: 0
+        max-count: 2
+      - structure: bed
+        weight: 1
+        min-count: 0
+        max-count: 5
+      - structure: blacksmith
+        weight: 2
+        min-count: 0
+        max-count: 3
+      - structure: cake
+        weight: 1
+        min-count: 0
+        max-count: 5
+      - structure: coal_storage
+        weight: 1
+        min-count: 0
+        max-count: 3
+      - structure: dinning
+        weight: 5
+        min-count: 0
+        max-count: 3
+      - structure: enchanting
+        weight: 3
+        min-count: 0
+        max-count: 2
+      - structure: food_storage
+        weight: 1
+        min-count: 0
+        max-count: 3
+      - structure: hay_storage
+        weight: 1
+        min-count: 0
+        max-count: 3
+      - structure: jukebox
+        weight: 2
+        min-count: 0
+        max-count: 3
+      - structure: kitchen
+        weight: 2
+        min-count: 0
+        max-count: 3
+      - structure: library
+        weight: 1
+        min-count: 1
+        max-count: 2
+      - structure: storage
+        weight: 2
+        min-count: 0
+        max-count: 3
+      - structure: throne
+        weight: 10
+        min-count: 1
+        max-count: 1
