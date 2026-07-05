@@ -8,6 +8,12 @@ shapes.
 
 ## Conventions
 
+- **Target platform:** Minecraft **26.2** ("Chaos Cubed") — the newest game
+  drop under Mojang's `year.drop.hotfix` scheme — on **Java 25**. Run the
+  plugin on Paper for that version (Paper **26.1.2** is the current stable
+  build; 26.2 builds are experimental at time of writing). The `Material`
+  enum, world names, and coordinate semantics referenced below track that
+  release.
 - **Base URL:** `http://localhost:8080` (configurable, plugin-side and via
   `HEARTHLANDS_API_URL`).
 - **Auth:** every request carries `Authorization: Bearer <API_KEY>`. Reject
@@ -87,7 +93,7 @@ Server health.
   "uptime_seconds": 128400,
   "world_time_ticks": 6000,
   "world_time_label": "Noon",
-  "version": "Paper 1.19.2"
+  "version": "Paper 26.2"
 }
 ```
 

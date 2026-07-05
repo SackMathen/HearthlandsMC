@@ -1,7 +1,8 @@
 # Hearthlands MCP Server
 
 An [MCP](https://modelcontextprotocol.io) server that connects Claude to
-**The Hearthlands** — a custom medieval-fantasy Minecraft **Paper** server —
+**The Hearthlands** — a custom medieval-fantasy Minecraft **Paper** server
+(targeting Minecraft **26.2**, the newest game drop, on **Java 25**) —
 through the server's companion Paper plugin HTTP API.
 
 It exposes read tools (players, factions, territory, status) and write tools
@@ -147,6 +148,14 @@ pytest
 
 ## Building the Paper plugin
 
+Target Minecraft **26.2** ("Chaos Cubed", the newest game drop) on **Java
+25**. Build against Paper for that version — Paper **26.1.2** is the current
+stable build; 26.2 builds are still experimental at the time of writing.
 Implement the endpoints in [`API_CONTRACT.md`](./API_CONTRACT.md). The mock
 backend in `src/hearthlands_mcp/mock.py` is the reference for the exact JSON
 shapes the MCP server expects.
+
+Because the MCP server communicates over plain HTTP + JSON, it is not tied to
+any specific Paper build — point it at whatever Paper version the plugin runs
+on. When you bump Paper, keep the plugin's `Material` names and world
+handling in sync with that release.

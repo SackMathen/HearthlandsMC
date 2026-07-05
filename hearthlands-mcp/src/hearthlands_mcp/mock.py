@@ -131,7 +131,7 @@ class MockBackend:
             "uptime_seconds": int(time.time() - _START_TIME),
             "world_time_ticks": 6000,
             "world_time_label": "Noon",
-            "version": "Paper 1.19.2 (mock)",
+            "version": "Paper 26.2 (mock)",
         }
 
     # -- writes -------------------------------------------------------------
