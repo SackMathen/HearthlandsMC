@@ -111,13 +111,37 @@ public class CastlePlacer {
                     // ---- Connector pieces in the EAST gap (between gx and gx+1) ----
                     if (gx < w - 1 && floor < NUM_FLOORS - 1) {
                         ConnectionType conn = grid.getConnection(gx, gz, Direction4.EAST);
-                        placeConnectorX(conn, world, originX + gx * STRIDE + CELL_W, wy, wz, pieces, rng, layout, gx, gz);
+                        placeConnectorX(conn, world, wx + CELL_W, wy, wz, pieces, rng, layout, gx, gz, Direction4.EAST, false);
                     }
 
                     // ---- Connector pieces in the SOUTH gap (between gz and gz+1) ----
                     if (gz < d - 1 && floor < NUM_FLOORS - 1) {
                         ConnectionType conn = grid.getConnection(gx, gz, Direction4.SOUTH);
-                        placeConnectorZ(conn, world, wx, wy, originZ + gz * STRIDE + CELL_D, pieces, rng, layout, gx, gz);
+                        placeConnectorZ(conn, world, wx, wy, wz + CELL_D, pieces, rng, layout, gx, gz, Direction4.SOUTH, false);
+                    }
+
+                    // ---- Exterior connectors: close openings on the outer faces of perimeter HALLWAY cells ----
+                    if (nodeType == CastleNodeType.HALLWAY && floor < NUM_FLOORS - 1) {
+                        if (gz == 0) {
+                            // North exterior — 1-block gap just outside the north face
+                            ConnectionType conn = grid.getConnection(gx, gz, Direction4.NORTH);
+                            placeConnectorZ(conn, world, wx, wy, wz - 1, pieces, rng, layout, gx, gz, Direction4.NORTH, true);
+                        }
+                        if (gz == d - 1) {
+                            // South exterior — 1-block gap just outside the south face
+                            ConnectionType conn = grid.getConnection(gx, gz, Direction4.SOUTH);
+                            placeConnectorZ(conn, world, wx, wy, wz + CELL_D, pieces, rng, layout, gx, gz, Direction4.SOUTH, true);
+                        }
+                        if (gx == 0) {
+                            // West exterior — 1-block gap just outside the west face
+                            ConnectionType conn = grid.getConnection(gx, gz, Direction4.WEST);
+                            placeConnectorX(conn, world, wx - 1, wy, wz, pieces, rng, layout, gx, gz, Direction4.WEST, true);
+                        }
+                        if (gx == w - 1) {
+                            // East exterior — 1-block gap just outside the east face
+                            ConnectionType conn = grid.getConnection(gx, gz, Direction4.EAST);
+                            placeConnectorX(conn, world, wx + CELL_W, wy, wz, pieces, rng, layout, gx, gz, Direction4.EAST, true);
+                        }
                     }
                 }
             }
@@ -134,15 +158,17 @@ public class CastlePlacer {
     // Connector placement helpers
 
     /**
-     * Places a connector piece (door/wall/passage) in the 1-block X-direction gap
-     * between cell (gx,gz) and (gx+1,gz).
+     * Places a connector piece (door/wall/passage) in the 1-block X-direction gap.
+     * Interior gap: between cell (gx,gz) and (gx+1,gz) — pass dir=EAST, isExterior=false.
+     * Exterior gap: west/east face of a perimeter cell — pass dir=WEST/EAST, isExterior=true.
      * The base piece is [7×5×1]; rotate CW90 so it becomes [1×5×7] in the gap.
      */
     private static void placeConnectorX(ConnectionType conn, World world,
                                         int gapX, int y, int z,
                                         PieceSet pieces, Random rng,
-                                        CastleLayout layout, int gx, int gz) {
-        String pieceName = connectorPieceName(conn, layout, gx, gz, Direction4.EAST);
+                                        CastleLayout layout, int gx, int gz,
+                                        Direction4 dir, boolean isExterior) {
+        String pieceName = connectorPieceName(conn, layout, gx, gz, dir, isExterior);
         if (pieceName == null) return;
 
         Structure piece = pieces.getPiece(pieceName);
@@ -156,14 +182,17 @@ public class CastlePlacer {
     }
 
     /**
-     * Places a connector piece in the 1-block Z-direction gap between (gx,gz) and (gx,gz+1).
+     * Places a connector piece in the 1-block Z-direction gap.
+     * Interior gap: between (gx,gz) and (gx,gz+1) — pass dir=SOUTH, isExterior=false.
+     * Exterior gap: north/south face of a perimeter cell — pass dir=NORTH/SOUTH, isExterior=true.
      * No rotation needed — the base piece [7×5×1] already aligns along Z.
      */
     private static void placeConnectorZ(ConnectionType conn, World world,
                                         int x, int y, int gapZ,
                                         PieceSet pieces, Random rng,
-                                        CastleLayout layout, int gx, int gz) {
-        String pieceName = connectorPieceName(conn, layout, gx, gz, Direction4.SOUTH);
+                                        CastleLayout layout, int gx, int gz,
+                                        Direction4 dir, boolean isExterior) {
+        String pieceName = connectorPieceName(conn, layout, gx, gz, dir, isExterior);
         if (pieceName == null) return;
 
         Structure piece = pieces.getPiece(pieceName);
@@ -177,7 +206,7 @@ public class CastlePlacer {
 
     private static String connectorPieceName(ConnectionType conn,
                                              CastleLayout layout, int gx, int gz,
-                                             Direction4 dir) {
+                                             Direction4 dir, boolean isExterior) {
         // Check if this is the main entrance exterior connector
         boolean isEntrance = (gx == layout.getEntranceGx() && gz == layout.getEntranceGz()
                 && dir == layout.getEntranceFacing());
@@ -185,7 +214,7 @@ public class CastlePlacer {
         return switch (conn) {
             case DOOR    -> isEntrance ? "hallway_entrance" : "door";
             case PASSAGE -> "passage";
-            case WALL    -> isEntrance ? "hallway_entrance" : "wall";
+            case WALL    -> isEntrance ? "hallway_entrance" : (isExterior ? "hallway_window" : "wall");
             case NONE    -> null;
         };
     }
@@ -200,41 +229,37 @@ public class CastlePlacer {
         int w = layout.getWidth();
         int d = layout.getDepth();
 
-        // tower_balustrade [7×10×2] placed on each exterior face at y = originY + FLOOR_H
-        // (spans the top 2 floors of the tower)
+        // tower_balustrade [7×10×2] spans the top 2 floors; tower_window [7×5×2] covers floor 0.
+        // Both protrude 2 blocks outward from the tower face on each exterior side.
         int balY = originY + FLOOR_H;
+        int winY = originY;
+
+        Structure tb = pieces.getPiece("tower_balustrade");
+        Structure tw = pieces.getPiece("tower_window");
 
         if (gz == 0) { // north face
-            Structure tb = pieces.getPiece("tower_balustrade");
-            if (tb != null) {
-                StructurePlaceSettings s = new StructurePlaceSettings()
-                        .setRotation(StructureRotation.NONE).setMirror(Mirror.NONE);
-                placeStructure(tb, world, wx, balY, wz - 2, s, rng);
-            }
+            if (tb != null) placeStructure(tb, world, wx, balY, wz - 2,
+                    new StructurePlaceSettings().setRotation(StructureRotation.NONE).setMirror(Mirror.NONE), rng);
+            if (tw != null) placeStructure(tw, world, wx, winY, wz - 2,
+                    new StructurePlaceSettings().setRotation(StructureRotation.NONE).setMirror(Mirror.NONE), rng);
         }
         if (gz == d - 1) { // south face
-            Structure tb = pieces.getPiece("tower_balustrade");
-            if (tb != null) {
-                StructurePlaceSettings s = new StructurePlaceSettings()
-                        .setRotation(StructureRotation.CLOCKWISE_180).setMirror(Mirror.NONE);
-                placeStructure(tb, world, wx, balY, wz + CELL_D + 2, s, rng);
-            }
+            if (tb != null) placeStructure(tb, world, wx, balY, wz + CELL_D + 2,
+                    new StructurePlaceSettings().setRotation(StructureRotation.CLOCKWISE_180).setMirror(Mirror.NONE), rng);
+            if (tw != null) placeStructure(tw, world, wx, winY, wz + CELL_D + 2,
+                    new StructurePlaceSettings().setRotation(StructureRotation.CLOCKWISE_180).setMirror(Mirror.NONE), rng);
         }
         if (gx == 0) { // west face
-            Structure tb = pieces.getPiece("tower_balustrade");
-            if (tb != null) {
-                StructurePlaceSettings s = new StructurePlaceSettings()
-                        .setRotation(StructureRotation.COUNTERCLOCKWISE_90).setMirror(Mirror.NONE);
-                placeStructure(tb, world, wx - 2, balY, wz, s, rng);
-            }
+            if (tb != null) placeStructure(tb, world, wx - 2, balY, wz,
+                    new StructurePlaceSettings().setRotation(StructureRotation.COUNTERCLOCKWISE_90).setMirror(Mirror.NONE), rng);
+            if (tw != null) placeStructure(tw, world, wx - 2, winY, wz,
+                    new StructurePlaceSettings().setRotation(StructureRotation.COUNTERCLOCKWISE_90).setMirror(Mirror.NONE), rng);
         }
         if (gx == w - 1) { // east face
-            Structure tb = pieces.getPiece("tower_balustrade");
-            if (tb != null) {
-                StructurePlaceSettings s = new StructurePlaceSettings()
-                        .setRotation(StructureRotation.CLOCKWISE_90).setMirror(Mirror.NONE);
-                placeStructure(tb, world, wx + CELL_W + 2, balY, wz, s, rng);
-            }
+            if (tb != null) placeStructure(tb, world, wx + CELL_W + 2, balY, wz,
+                    new StructurePlaceSettings().setRotation(StructureRotation.CLOCKWISE_90).setMirror(Mirror.NONE), rng);
+            if (tw != null) placeStructure(tw, world, wx + CELL_W + 2, winY, wz,
+                    new StructurePlaceSettings().setRotation(StructureRotation.CLOCKWISE_90).setMirror(Mirror.NONE), rng);
         }
     }
 
